@@ -240,6 +240,43 @@ var LINKS = {
     });
   });
 
+  // home: the hero portraits can be picked up and moved around the first screen; they land with a small tilt,
+  // and a double-click sends one back to its place in the Figma layout (desktop only; the texts over them are .pass)
+  var drags = [].slice.call(doc.querySelectorAll('.drag'));
+  function restack(el) {   // the last one moved sits on top (all stay under the link hit areas, z-index 20)
+    drags.splice(drags.indexOf(el), 1); drags.push(el);
+    drags.forEach(function (d, i) { d.style.zIndex = 10 + i; });
+  }
+  drags.forEach(function (el) {
+    var home = [el.style.left, el.style.top];
+    var band = el.parentElement.querySelector('.band');
+    el.addEventListener('pointerdown', function (ev) {
+      if (ev.button !== 0 || root.clientWidth < 1000) return;
+      ev.preventDefault();
+      var k = Math.min(1, root.clientWidth / 1440);   // same scale as fit()
+      var sx = ev.clientX, sy = ev.clientY, l = el.offsetLeft, t = el.offsetTop, moved = false;
+      var maxX = 1440 - el.offsetWidth, maxY = (band ? band.offsetHeight : 736) - el.offsetHeight;
+      el.setPointerCapture(ev.pointerId);
+      el.classList.add('dragging'); restack(el);
+      function move(e) {
+        var dx = (e.clientX - sx) / k, dy = (e.clientY - sy) / k;
+        if (!moved && Math.abs(dx) + Math.abs(dy) < 3) return;
+        moved = true;
+        el.style.left = Math.max(0, Math.min(maxX, l + dx)) + 'px';
+        el.style.top = Math.max(0, Math.min(maxY, t + dy)) + 'px';
+      }
+      function up() {
+        el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
+        el.classList.remove('dragging');
+        if (moved) el.style.rotate = ((Math.random() < .5 ? -1 : 1) * (2 + Math.random() * 5)).toFixed(1) + 'deg';
+      }
+      el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    });
+    el.addEventListener('dblclick', function () {
+      el.style.left = home[0]; el.style.top = home[1]; el.style.rotate = '';
+    });
+  });
+
   // projects page: roll the dice → pick a category → filter the gallery
   var NAMES = { 1: 'Branding', 2: 'Editorial', 3: 'Web Design', 4: 'Other Works' };
   function filter(k) {

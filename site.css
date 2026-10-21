@@ -37,6 +37,14 @@ a{color:inherit}
 .hovcard.e.im{transform:translateY(-6px);filter:drop-shadow(0 16px 26px rgba(117,30,49,.20))}
 .hovcard.e.t{transform:translateY(-2px)}
 .hovcat.e{transform:translateX(10px)}
+/* home hero portraits (site.js): lift on hover, drag around the first screen, land tilted */
+.pass{pointer-events:none}
+.drag{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s,rotate .5s cubic-bezier(.3,1.6,.5,1),left .6s cubic-bezier(.3,.8,.2,1),top .6s cubic-bezier(.3,.8,.2,1)}
+.drag img{pointer-events:none;-webkit-user-drag:none}
+.drag:hover{transform:translateY(-6px) scale(1.02);filter:drop-shadow(0 14px 22px rgba(117,30,49,.22))}
+.drag.dragging{cursor:grabbing;transform:scale(1.05);filter:drop-shadow(0 22px 32px rgba(117,30,49,.28));
+  transition:transform .2s,filter .2s,rotate .2s}
 .picked.e.t{color:var(--hot)!important;transform:translateX(14px)}
 /* picked category: fill and outline swap (hot-pink letters, pink outline) */
 .picked{--ol:var(--pink)}
