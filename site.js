@@ -82,8 +82,15 @@ var LINKS = {
   if (!reduce && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { rootMargin: '0px 0px -8% 0px' });
+    }, { rootMargin: '0px 0px -40px 0px' });
     doc.querySelectorAll('.rv').forEach(function (el) { io.observe(el); });
+    // anything at the very bottom of the page (footer) can never scroll past the margin: reveal it at the end
+    function atEnd() {
+      if (innerHeight + scrollY >= doc.documentElement.scrollHeight - 80) {
+        doc.querySelectorAll('.rv:not(.in)').forEach(function (el) { el.classList.add('in'); });
+      }
+    }
+    window.addEventListener('scroll', atEnd, { passive: true }); atEnd();
   } else {
     doc.querySelectorAll('.rv').forEach(function (el) { el.classList.add('in'); });
   }
